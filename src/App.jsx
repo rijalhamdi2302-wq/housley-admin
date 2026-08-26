@@ -97,16 +97,16 @@ function LoginPage({ onLogin }) {
 /* ─── Sidebar ─────────────────────────────────────────────────────────────── */
 const NAV_ITEMS = [
   { id: 'dashboard', icon: '📊', label: 'Dashboard' },
-  { id: 'families', icon: '👨‍👩‍👧‍👦', label: 'Families' },
-  { id: 'users', icon: '👤', label: 'Users' },
-  { id: 'orders', icon: '💳', label: 'Payments' },
-  { id: 'activity', icon: '📋', label: 'Activity' },
-  { id: 'promos', icon: '🏷️', label: 'Promos' },
-  { id: 'reports', icon: '📈', label: 'Reports' },
-  { id: 'announcements', icon: '📣', label: 'Announcements' },
-  { id: 'releases', icon: '📦', label: 'App Releases' },
-  { id: 'issues', icon: '🐛', label: 'User Issues' },
-  { id: 'system', icon: '⚙️', label: 'System' },
+  { id: 'families', icon: 'F', label: 'Families' },
+  { id: 'users', icon: 'U', label: 'Users' },
+  { id: 'orders', icon: 'P', label: 'Payments' },
+  { id: 'activity', icon: 'A', label: 'Activity' },
+  { id: 'promos', icon: 'C', label: 'Promos' },
+  { id: 'reports', icon: 'R', label: 'Reports' },
+  { id: 'announcements', icon: 'N', label: 'Announcements' },
+  { id: 'releases', icon: 'V', label: 'App Releases' },
+  { id: 'issues', icon: '!', label: 'User Issues' },
+  { id: 'system', icon: 'S', label: 'System' },
 ];
 
 function Sidebar({ active, onSelect, admin, onLogout, darkMode, setDarkMode }) {
@@ -163,12 +163,12 @@ function DashboardPage() {
   if (!data) return <div className="page-error">Failed to load dashboard.</div>;
 
   const statCards = [
-    { icon: '👨‍👩‍👧‍👦', label: 'Total Families', value: data.totalFamilies, color: '#ff6f91' },
-    { icon: '👤', label: 'Total Users', value: data.totalUsers, color: '#4e9de6' },
+    { icon: 'F', label: 'Total Families', value: data.totalFamilies, color: '#ff6f91' },
+    { icon: 'U', label: 'Total Users', value: data.totalUsers, color: '#4e9de6' },
     { icon: '⭐', label: 'Pro Families', value: data.proFamilies, color: '#f7b32b' },
     { icon: '💰', label: 'Revenue', value: data.revenue?.totalRM, color: '#34c759', prefix: 'RM ' },
-    { icon: '💳', label: 'Paid Orders', value: data.revenue?.orderCount, color: '#7c5cd6' },
-    { icon: '📈', label: 'Active Orders', value: data.activeOrders, color: '#ff9500' },
+    { icon: 'P', label: 'Paid Orders', value: data.revenue?.orderCount, color: '#7c5cd6' },
+    { icon: 'A', label: 'Active Orders', value: data.activeOrders, color: '#ff9500' },
     { icon: '💸', label: 'Total Expenses', value: data.totalExpenses, color: '#ff3b30' },
     { icon: '📥', label: 'Total Fundings', value: data.totalFunding, color: '#00bcd4' },
   ];
@@ -186,19 +186,19 @@ function DashboardPage() {
 
       <div className="quick-actions">
         <div className="quick-action" onClick={() => document.querySelector('[data-nav="families"]')?.click()}>
-          <span className="quick-action-icon">👨‍👩‍👧‍👦</span>
+          <span className="quick-action-icon">F</span>
           <div><div className="quick-action-label">Manage Families</div><div className="quick-action-sub">View & edit all families</div></div>
         </div>
         <div className="quick-action" onClick={() => document.querySelector('[data-nav="users"]')?.click()}>
-          <span className="quick-action-icon">👤</span>
+          <span className="quick-action-icon">U</span>
           <div><div className="quick-action-label">Manage Users</div><div className="quick-action-sub">View & edit all users</div></div>
         </div>
         <div className="quick-action" onClick={() => document.querySelector('[data-nav="orders"]')?.click()}>
-          <span className="quick-action-icon">💳</span>
+          <span className="quick-action-icon">P</span>
           <div><div className="quick-action-label">View Payments</div><div className="quick-action-sub">Orders & revenue</div></div>
         </div>
         <div className="quick-action" onClick={() => document.querySelector('[data-nav="reports"]')?.click()}>
-          <span className="quick-action-icon">📈</span>
+          <span className="quick-action-icon">A</span>
           <div><div className="quick-action-label">Reports</div><div className="quick-action-sub">Analytics & trends</div></div>
         </div>
       </div>
@@ -427,8 +427,8 @@ function UserDetail({ user, stats, onClose, onEdit, onDelete }) {
               <div><span className="info-label">Role:</span> {roleBadge(user.role)}</div>
               <div><span className="info-label">Family:</span> {user.familyName}</div>
               <div><span className="info-label">Pro:</span> {tierBadge(user.proTier)}</div>
-              <div><span className="info-label">PIN:</span> {user.pinHash === '(set)' ? '✅ Set' : '❌ Not set'}</div>
-              <div><span className="info-label">Biometric:</span> {user.biometricEnabled ? '✅ Enabled' : '❌ Disabled'}</div>
+              <div><span className="info-label">PIN:</span> {user.pinHash === '(set)' ? 'SET' : 'NOT SET'}</div>
+              <div><span className="info-label">Biometric:</span> {user.biometricEnabled ? 'ENABLED' : 'DISABLED'}</div>
               <div><span className="info-label">Joined:</span> {fmtDateTime(user.createdAt)}</div>
             </div>
           )}
@@ -571,7 +571,7 @@ function FamilyDetail({ family: { family, members, orders, stats, revenue }, onB
               <div><span className="info-label">Pro:</span> {tierBadge(family.proTier)}</div>
               <div><span className="info-label">Pro Purchased:</span> {fmtDate(family.proPurchasedAt)}</div>
               <div><span className="info-label">Pro Expires:</span> {fmtDate(family.proExpiresAt)}</div>
-              <div><span className="info-label">AI:</span> {family.aiEnabled ? '✅' : '❌'}</div>
+              <div><span className="info-label">AI:</span> {family.aiEnabled ? '' : '❌'}</div>
               <div><span className="info-label">Currency:</span> {family.currency}</div>
               <div><span className="info-label">Created:</span> {fmtDateTime(family.createdAt)}</div>
             </div>
@@ -597,7 +597,7 @@ function FamilyDetail({ family: { family, members, orders, stats, revenue }, onB
                 <td><strong>{m.name}</strong></td>
                 <td>{m.email || '—'}</td>
                 <td>{roleBadge(m.role)}</td>
-                <td>{m.pinHash === '(set)' ? '✅' : '—'}</td>
+                <td>{m.pinHash === '(set)' ? '' : '—'}</td>
                 <td>{fmtDate(m.createdAt)}</td>
               </tr>
             ))}
@@ -895,7 +895,7 @@ function ReportsPage() {
 
   return (
     <div className="page">
-      <h2>📈 Reports & Analytics</h2>
+      <h2>Reports & Analytics</h2>
 
       <div className="grid-2">
         <div className="card animate-in">
@@ -991,7 +991,7 @@ function AnnouncementsPage() {
 
   return (
     <div className="page">
-      <h2>📣 Announcements</h2>
+      <h2>Announcements</h2>
       <p style={{ color: 'var(--text-secondary)', marginBottom: 24, fontSize: 14 }}>
         Send push notifications and in-app messages to all users or specific families.
       </p>
@@ -1018,7 +1018,7 @@ function AnnouncementsPage() {
                 <option value="info">ℹ️ Info</option>
                 <option value="update">🔄 Update</option>
                 <option value="promo">🎉 Promotion</option>
-                <option value="warning">⚠️ Warning</option>
+                <option value="warning">Warning</option>
               </select>
             </div>
             <button className="btn btn-primary" onClick={sendAnnouncement} disabled={sending || !newTitle.trim()}>
@@ -1190,7 +1190,7 @@ function ReleasesPage() {
                   <td style={{ maxWidth: 200, overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
                     {(r.releaseNotes || []).join(', ') || '—'}
                   </td>
-                  <td>{r.isMandatory ? '✅' : '—'}</td>
+                  <td>{r.isMandatory ? '' : '—'}</td>
                   <td>{fmtDateTime(r.createdAt)}</td>
                   <td>
                     {!r.isLatest && (
@@ -1306,12 +1306,12 @@ function SystemPage() {
 
   return (
     <div className="page">
-      <h2>⚙️ System</h2>
+      <h2> System</h2>
       <div className="grid-2">
         <div className="card animate-in">
           <h3>Health</h3>
           <div className="info-grid">
-            <div><span className="info-label">Status:</span> {sys?.status === 'healthy' ? '✅ Healthy' : '❌ Disconnected'}</div>
+            <div><span className="info-label">Status:</span> {sys?.status === 'healthy' ? 'HEALTHY' : 'DISCONNECTED'}</div>
             <div><span className="info-label">MongoDB:</span> {sys?.mongodb}</div>
             <div><span className="info-label">Uptime:</span> {sys?.uptime ? `${Math.floor(sys.uptime / 60)}m ${Math.floor(sys.uptime % 60)}s` : '—'}</div>
             <div><span className="info-label">Memory:</span> {sys?.memory ? `${(sys.memory.heapUsed / 1024 / 1024).toFixed(1)} MB` : '—'}</div>
