@@ -6,6 +6,24 @@ import { useState, useEffect, useCallback, useMemo } from 'react';
 import { api } from './api';
 import './App.css';
 
+/* ─── Custom SVG Icons ──────────────────────────────────────────────────── */
+const SI = {
+  people: (p) => <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...p}><circle cx="9" cy="7" r="3.5"/><path d="M2 21c0-3.9 3.1-7 7-7s7 3.1 7 7"/><circle cx="17" cy="9" r="2.5"/><path d="M22 21c0-2.8-2.2-5-5-5"/></svg>,
+  person: (p) => <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...p}><circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8"/></svg>,
+  payment: (p) => <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...p}><rect x="2" y="5" width="20" height="14" rx="2"/><path d="M2 10h20"/></svg>,
+  activity: (p) => <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...p}><path d="M4 20V10M10 20V4M16 20v-8M21 20H3"/></svg>,
+  tag: (p) => <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...p}><path d="M3 12V4h8l9 9-7 7-10-8Z"/><circle cx="7.5" cy="8.5" r="1.4"/></svg>,
+  chart: (p) => <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...p}><path d="M3 17l6-6 4 4 8-8"/><path d="M14 7h7v7"/></svg>,
+  megaphone: (p) => <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...p}><path d="M3 11l18-5v12L3 13v-2z"/><path d="M11.6 16.8a3 3 0 1 1-5.8-1.6"/></svg>,
+  package: (p) => <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...p}><path d="m16.5 9.4-9-5.19M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/><path d="M3.27 6.96 12 12.01l8.73-5.05M12 22.08V12"/></svg>,
+  bug: (p) => <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...p}><path d="M8 2l1.88 1.88M14.12 3.88 16 2M9 7.13v-1a3.003 3.003 0 1 1 6 0v1"/><path d="M12 20c-3.3 0-6-2.7-6-6v-3a4 4 0 0 1 4-4h4a4 4 0 0 1 4 4v3c0 3.3-2.7 6-6 6"/><path d="M2 11h2M20 11h2M6 11v-1M18 11v-1M2 15h2M20 15h2"/></svg>,
+  gear: (p) => <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...p}><circle cx="12" cy="12" r="3.2"/><path d="M12 2.8v3M12 18.2v3M2.8 12h3M18.2 12h3M5.5 5.5l2.1 2.1M16.4 16.4l2.1 2.1M18.5 5.5l-2.1 2.1M7.6 16.4l-2.1 2.1"/></svg>,
+  shield: (p) => <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...p}><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>,
+  check: (p) => <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...p}><path d="m4.5 12.5 5 5 10-11"/></svg>,
+  x: (p) => <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...p}><path d="M6 6l12 12M18 6 6 18"/></svg>,
+  warning: (p) => <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" {...p}><path d="M12 3 2.5 20h19L12 3Z"/><path d="M12 9.5V14"/><path d="M12 17h.01"/></svg>,
+};
+
 /* ─── tiny helpers ────────────────────────────────────────────────────────── */
 function fmt(n) { return typeof n === 'number' ? n.toLocaleString() : n; }
 function fmtRM(n) { return `RM ${fmt(n)}`; }
@@ -97,16 +115,16 @@ function LoginPage({ onLogin }) {
 /* ─── Sidebar ─────────────────────────────────────────────────────────────── */
 const NAV_ITEMS = [
   { id: 'dashboard', icon: '📊', label: 'Dashboard' },
-  { id: 'families', icon: 'F', label: 'Families' },
-  { id: 'users', icon: 'U', label: 'Users' },
-  { id: 'orders', icon: 'P', label: 'Payments' },
-  { id: 'activity', icon: 'A', label: 'Activity' },
-  { id: 'promos', icon: 'C', label: 'Promos' },
-  { id: 'reports', icon: 'R', label: 'Reports' },
-  { id: 'announcements', icon: 'N', label: 'Announcements' },
-  { id: 'releases', icon: 'V', label: 'App Releases' },
-  { id: 'issues', icon: '!', label: 'User Issues' },
-  { id: 'system', icon: 'S', label: 'System' },
+  { id: 'families', icon: 'people', label: 'Families' },
+  { id: 'users', icon: 'person', label: 'Users' },
+  { id: 'orders', icon: 'payment', label: 'Payments' },
+  { id: 'activity', icon: 'activity', label: 'Activity' },
+  { id: 'promos', icon: 'tag', label: 'Promos' },
+  { id: 'reports', icon: 'chart', label: 'Reports' },
+  { id: 'announcements', icon: 'megaphone', label: 'Announcements' },
+  { id: 'releases', icon: 'package', label: 'App Releases' },
+  { id: 'issues', icon: 'bug', label: 'User Issues' },
+  { id: 'system', icon: 'gear', label: 'System' },
 ];
 
 function Sidebar({ active, onSelect, admin, onLogout, darkMode, setDarkMode }) {
@@ -123,7 +141,7 @@ function Sidebar({ active, onSelect, admin, onLogout, darkMode, setDarkMode }) {
             className={`nav-item ${active === item.id ? 'active' : ''}`}
             onClick={() => onSelect(item.id)}
           >
-            <span className="nav-icon">{item.icon}</span>
+            <span className="nav-icon">{SI[item.icon] ? SI[item.icon]() : item.icon}</span>
             <span className="nav-label">{item.label}</span>
           </button>
         ))}
@@ -133,7 +151,7 @@ function Sidebar({ active, onSelect, admin, onLogout, darkMode, setDarkMode }) {
         <div className={`theme-toggle-track ${darkMode ? 'dark' : ''}`}>
           <div className="theme-toggle-thumb" />
         </div>
-        <span className="theme-toggle-label">{darkMode ? '🌙 Dark Mode' : '☀️ Light Mode'}</span>
+        <span className="theme-toggle-label">{darkMode ? 'Dark Mode' : 'Light Mode'}</span>
       </div>
 
       <div className="sidebar-footer">
@@ -163,12 +181,12 @@ function DashboardPage() {
   if (!data) return <div className="page-error">Failed to load dashboard.</div>;
 
   const statCards = [
-    { icon: 'F', label: 'Total Families', value: data.totalFamilies, color: '#ff6f91' },
-    { icon: 'U', label: 'Total Users', value: data.totalUsers, color: '#4e9de6' },
+    { icon: 'people', label: 'Total Families', value: data.totalFamilies, color: '#ff6f91' },
+    { icon: 'person', label: 'Total Users', value: data.totalUsers, color: '#4e9de6' },
     { icon: '⭐', label: 'Pro Families', value: data.proFamilies, color: '#f7b32b' },
     { icon: '💰', label: 'Revenue', value: data.revenue?.totalRM, color: '#34c759', prefix: 'RM ' },
-    { icon: 'P', label: 'Paid Orders', value: data.revenue?.orderCount, color: '#7c5cd6' },
-    { icon: 'A', label: 'Active Orders', value: data.activeOrders, color: '#ff9500' },
+    { icon: 'payment', label: 'Paid Orders', value: data.revenue?.orderCount, color: '#7c5cd6' },
+    { icon: 'chart', label: 'Active Orders', value: data.activeOrders, color: '#ff9500' },
     { icon: '💸', label: 'Total Expenses', value: data.totalExpenses, color: '#ff3b30' },
     { icon: '📥', label: 'Total Fundings', value: data.totalFunding, color: '#00bcd4' },
   ];
@@ -186,19 +204,19 @@ function DashboardPage() {
 
       <div className="quick-actions">
         <div className="quick-action" onClick={() => document.querySelector('[data-nav="families"]')?.click()}>
-          <span className="quick-action-icon">F</span>
+          <span className="quick-action-icon">{SI.people()}</span>
           <div><div className="quick-action-label">Manage Families</div><div className="quick-action-sub">View & edit all families</div></div>
         </div>
         <div className="quick-action" onClick={() => document.querySelector('[data-nav="users"]')?.click()}>
-          <span className="quick-action-icon">U</span>
+          <span className="quick-action-icon">{SI.person()}</span>
           <div><div className="quick-action-label">Manage Users</div><div className="quick-action-sub">View & edit all users</div></div>
         </div>
         <div className="quick-action" onClick={() => document.querySelector('[data-nav="orders"]')?.click()}>
-          <span className="quick-action-icon">P</span>
+          <span className="quick-action-icon">{SI.payment()}</span>
           <div><div className="quick-action-label">View Payments</div><div className="quick-action-sub">Orders & revenue</div></div>
         </div>
         <div className="quick-action" onClick={() => document.querySelector('[data-nav="reports"]')?.click()}>
-          <span className="quick-action-icon">A</span>
+          <span className="quick-action-icon">{SI.chart()}</span>
           <div><div className="quick-action-label">Reports</div><div className="quick-action-sub">Analytics & trends</div></div>
         </div>
       </div>
@@ -206,7 +224,7 @@ function DashboardPage() {
       <div className="stats-grid">
         {statCards.map((s, i) => (
           <div key={i} className="stat-card animate-in" style={{ borderLeftColor: s.color, animationDelay: `${i * 60}ms` }}>
-            <div className="stat-icon">{s.icon}</div>
+            <div className="stat-icon">{SI[s.icon] ? SI[s.icon]() : s.icon}</div>
             <div className="stat-content">
               <div className="stat-value">
                 <AnimatedNumber value={s.value} prefix={s.prefix || ''} />
@@ -571,7 +589,7 @@ function FamilyDetail({ family: { family, members, orders, stats, revenue }, onB
               <div><span className="info-label">Pro:</span> {tierBadge(family.proTier)}</div>
               <div><span className="info-label">Pro Purchased:</span> {fmtDate(family.proPurchasedAt)}</div>
               <div><span className="info-label">Pro Expires:</span> {fmtDate(family.proExpiresAt)}</div>
-              <div><span className="info-label">AI:</span> {family.aiEnabled ? '' : '❌'}</div>
+              <div><span className="info-label">AI:</span> {family.aiEnabled ? '' : ''}</div>
               <div><span className="info-label">Currency:</span> {family.currency}</div>
               <div><span className="info-label">Created:</span> {fmtDateTime(family.createdAt)}</div>
             </div>
