@@ -105,6 +105,7 @@ const NAV_ITEMS = [
   { id: 'reports', icon: '📈', label: 'Reports' },
   { id: 'announcements', icon: '📣', label: 'Announcements' },
   { id: 'releases', icon: '📦', label: 'App Releases' },
+  { id: 'issues', icon: '🐛', label: 'User Issues' },
   { id: 'system', icon: '⚙️', label: 'System' },
 ];
 
@@ -1206,6 +1207,86 @@ function ReleasesPage() {
   );
 }
 
+/* ─── User Issues Page ────────────────────────────────────────────────────── */
+function IssuesPage() {
+  const [reports, setReports] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [filter, setFilter] = useState('all');
+
+  const load = async () => {
+    setLoading(true);
+    try {
+      const r = await api.getReports();
+      setReports(r.reports || []);
+    } catch (e) { console.error(e); }
+    setLoading(false);
+  };
+
+  useEffect(() => { load(); }, []);
+
+  const updateStatus = async (id, status) => {
+    try {
+      await api.updateReport(id, { status });
+      load();
+    } catch (e) { alert(e.message); }
+  };
+
+  const deleteReport = async (id) => {
+    if (!confirm('Delete this report?')) return;
+    try {
+      await api.deleteReport(id);
+      load();
+    } catch (e) { alert(e.message); }
+  };
+
+  const filtered = filter === 'all' ? reports : reports.filter(r => r.status === filter);
+
+  return (
+    <div>
+      <h2 style={{ marginBottom: 16 }}>User Issues & Reports</h2>
+      <div style={{ display: 'flex', gap: 8, marginBottom: 16 }}>
+        {['all', 'new', 'read', 'resolved'].map(s => (
+          <button key={s} onClick={() => setFilter(s)} className={`btn btn-sm ${filter === s ? 'btn-primary' : 'btn-ghost'}`}>
+            {s.charAt(0).toUpperCase() + s.slice(1)} {s !== 'all' && `(${reports.filter(r => r.status === s).length})`}
+          </button>
+        ))}
+      </div>
+      {loading ? <div className="empty">Loading...</div> : filtered.length === 0 ? (
+        <div className="empty" style={{ padding: 40 }}>
+          <div style={{ fontSize: 40, marginBottom: 8 }}>No issues reported yet</div>
+          <div style={{ color: 'var(--text-secondary)' }}>When users report issues from the app, they'll appear here.</div>
+        </div>
+      ) : (
+        <div style={{ display: 'flex', flexDirection: 'column', gap: 10 }}>
+          {filtered.map(r => (
+            <div key={r._id} className="card" style={{ padding: 14 }}>
+              <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 8 }}>
+                <div style={{ display: 'flex', gap: 8, alignItems: 'center' }}>
+                  <span style={{ padding: '3px 10px', borderRadius: 20, fontSize: 11, fontWeight: 700, background: r.category === 'bug' ? 'var(--danger-soft)' : r.category === 'feature' ? 'var(--primary-soft)' : 'var(--surface-3)', color: r.category === 'bug' ? 'var(--danger)' : r.category === 'feature' ? 'var(--primary)' : 'var(--text-secondary)' }}>
+                    {r.category}
+                  </span>
+                  <span style={{ padding: '3px 10px', borderRadius: 20, fontSize: 11, fontWeight: 700, background: r.status === 'new' ? 'var(--warning-soft)' : r.status === 'read' ? 'var(--primary-soft)' : 'var(--success-soft)', color: r.status === 'new' ? 'var(--warning)' : r.status === 'read' ? 'var(--primary)' : 'var(--success)' }}>
+                    {r.status}
+                  </span>
+                </div>
+                <div style={{ display: 'flex', gap: 6 }}>
+                  {r.status === 'new' && <button className="btn btn-sm btn-ghost" onClick={() => updateStatus(r._id, 'read')}>Mark Read</button>}
+                  {r.status !== 'resolved' && <button className="btn btn-sm btn-ghost" onClick={() => updateStatus(r._id, 'resolved')}>Resolve</button>}
+                  <button className="btn btn-sm btn-danger-soft" onClick={() => deleteReport(r._id)}>Delete</button>
+                </div>
+              </div>
+              <div style={{ fontSize: 14, lineHeight: 1.5 }}>{r.message}</div>
+              <div style={{ fontSize: 11, color: 'var(--text-secondary)', marginTop: 6 }}>
+                {new Date(r.createdAt).toLocaleString()} • User: {r.userId} • Family: {r.familyId}
+              </div>
+            </div>
+          ))}
+        </div>
+      )}
+    </div>
+  );
+}
+
 /* ─── System Page ─────────────────────────────────────────────────────────── */
 function SystemPage() {
   const [sys, setSys] = useState(null);
@@ -1302,6 +1383,7 @@ export default function App() {
     reports: <ReportsPage />,
     announcements: <AnnouncementsPage />,
     releases: <ReleasesPage />,
+    issues: <IssuesPage />,
     system: <SystemPage />,
   };
 

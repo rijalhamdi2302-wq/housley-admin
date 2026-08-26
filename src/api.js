@@ -91,6 +91,11 @@ export const api = {
   },
   deleteRelease: (id) => request(`/api/admin/releases/${id}`, { method: 'DELETE' }),
 
+  // Report Issues
+  getReports: () => request('/api/admin/reports'),
+  updateReport: (id, data) => request(`/api/admin/reports/${id}`, { method: 'PATCH', body: JSON.stringify(data) }),
+  deleteReport: (id) => request(`/api/admin/reports/${id}`, { method: 'DELETE' }),
+
   // System
   system: () => request('/api/admin/system'),
   createAdmin: (data) => request('/api/admin/create-admin', { method: 'POST', body: JSON.stringify(data) }),
